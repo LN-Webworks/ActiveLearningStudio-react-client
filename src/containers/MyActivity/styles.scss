@@ -9,8 +9,8 @@
     padding: 32px 30px 30px;
     margin: 13px 39px 81px 29px;
     border-radius: 3px;
-    @media screen and (max-width: 1024px) {
-      margin: 13px 20px 81px 20px;
+    @media screen and(max-width: 1024px) {
+      margin: 13px 20px 81px;
     }
 
     .topHeadingBtn {
@@ -30,12 +30,12 @@
       width: max-content;
       margin-top: 33px;
       // .heading-custome {
-      //   h2 {
+      // h2 {
       //     font-style: normal;
       //     font-weight: 500;
       //     font-size: 18px;
       //     line-height: 20px;
-      //   }
+      // }
       // }
     }
     .activityBlocks {
@@ -57,12 +57,12 @@
           .mb-13 {
             margin-bottom: 13px;
           }
-          @media screen and (max-width: 1024px) {
+          @media screen and(max-width: 1024px) {
             margin-left: 15px;
           }
         }
         .blockBody-text {
-          @media screen and (max-width: 1024px) {
+          @media screen and(max-width: 1024px) {
             margin-left: 15px;
           }
           margin-top: 119px;
@@ -163,7 +163,7 @@
           margin-top: 36px;
           margin-left: 20px;
           // @media screen and (max-width: 1024px) {
-          //   margin-left: 20px;
+          // margin-left: 20px;
           // }
         }
         .mt-36 {
@@ -192,11 +192,11 @@
   padding-left: 285px;
   right: 0;
   // .cross-all-pop {
-  //   position: absolute;
-  //   top: 50px;
-  //   right: 50px;
-  //   font-size: 28px;
-  //   cursor: pointer;
+  // position: absolute;
+  // top: 50px;
+  // right: 50px;
+  // font-size: 28px;
+  // cursor: pointer;
   // }
   .inner-form-content {
     background: #fff;
@@ -254,8 +254,7 @@
     border-bottom: 1px solid #515151;
     font-weight: 400;
     font-size: 14px;
-    padding: 7px 8px;
-    padding-right: 20px;
+    padding: 7px 20px 7px 8px;
     width: 100%;
   }
   .dropdown-activity-select {
@@ -271,7 +270,7 @@
       display: flex;
       border: 1px solid #959595;
       align-items: center;
-      padding: 0px 8px;
+      padding: 0 8px;
       box-sizing: border-box;
       border-radius: 4px;
       display: flex;
@@ -284,7 +283,7 @@
     position: absolute;
     background-color: #fff;
     min-width: 200px;
-    box-shadow: 0px 4px 12px 2px rgba(81, 81, 81, 0.16);
+    box-shadow: 0 4px 12px 2px rgba(81, 81, 81, 0.16);
     border-radius: 4px;
     padding: 14px;
     z-index: 1;
@@ -310,7 +309,7 @@
 .create-form-activity {
   .activityHeading {
     width: 350px;
-    margin: 40px auto 0 auto;
+    margin: 40px auto 0;
     .headingText {
       text-align: center;
     }
@@ -320,7 +319,7 @@
     justify-content: center;
     margin-top: 80px;
     .layoutCard {
-      box-shadow: 0px 4px 12px rgba(81, 81, 81, 0.16);
+      box-shadow: 0 4px 12px rgba(81, 81, 81, 0.16);
       padding: 32px 20px;
       width: 320px;
       height: 241px;
@@ -421,7 +420,7 @@
     // justify-content: center;
     .activity-layout-cards {
       // @media screen and (max-width: 1024px) {
-      //   flex: 0.9;
+      // flex: 0.9;
       // }
       // flex: 0.3;
       width: 1000px;
@@ -433,7 +432,7 @@
       cursor: pointer;
       .ml-30 {
         margin-left: 30px;
-        @media screen and (max-width: 1024px) {
+        @media screen and(max-width: 1024px) {
           margin-left: 0;
           margin-right: 10px;
         }
@@ -516,8 +515,7 @@
       margin-left: 80px;
 
       .nav {
-        margin: 0;
-        margin-bottom: 10px;
+        margin: 0 0 10px;
         border: none !important;
 
         .nav-item {
@@ -610,7 +608,7 @@
     background-color: #dddddd;
 
     border-radius: 5px;
-    padding: 10px 15px 15px 15px;
+    padding: 10px 15px 15px;
     .box-title {
       margin-top: 15px;
       h3 {
@@ -640,8 +638,8 @@
           top: 50%;
           transform: translate(-50%, -50%);
           text-align: center;
-          font: normal normal normal 16px/22px $rubik;
-          letter-spacing: 0px;
+          font: normal normal normal 16px / 22px $rubik;
+          letter-spacing: 0;
           color: #5a5a5a;
           z-index: 1;
 
@@ -652,8 +650,8 @@
           }
 
           span {
-            font: normal normal normal 16px/22px $rubik;
-            letter-spacing: 0px;
+            font: normal normal normal 16px / 22px $rubik;
+            letter-spacing: 0;
             color: #084892;
             text-decoration: underline;
             cursor: pointer;
@@ -782,7 +780,7 @@
     align-items: flex-start;
     // justify-content: space-between;
     .add-activity-layout-formik {
-      @media screen and (max-width: 1024px) {
+      @media screen and(max-width: 1024px) {
         width: 280px;
       }
       max-width: 536px;
@@ -809,11 +807,11 @@
                 margin-right: 5px;
                 // display: none;
                 // &:checked + span {
-                //   background-color: $alert;
-                //   background-image: url("../../assets/images/svg/tick.svg");
-                //   background-repeat: no-repeat;
-                //   background-size: 71% 71%;
-                //   background-position: center;
+                // background-color: $alert;
+                // background-image: url("../../assets/images/svg/tick.svg");
+                // background-repeat: no-repeat;
+                // background-size: 71% 71%;
+                // background-position: center;
                 // }
               }
               span {
@@ -906,7 +904,7 @@
     }
 
     .add-activity-layout-videoTag {
-      @media screen and (max-width: 1024px) {
+      @media screen and(max-width: 1024px) {
         margin-left: 30px;
       }
 
@@ -927,7 +925,7 @@
         justify-content: space-between;
         margin-top: 50px;
         .mr-10 {
-          @media screen and (max-width: 1024px) {
+          @media screen and(max-width: 1024px) {
             margin-right: 10px;
           }
         }
@@ -942,7 +940,7 @@
         justify-content: center;
 
         img {
-          @media screen and (max-width: 1024px) {
+          @media screen and(max-width: 1024px) {
             width: 300px;
             height: 180px;
           }
@@ -955,7 +953,7 @@
         }
       }
       .existing-activity-dialog {
-        margin-top: 0px;
+        margin-top: 0;
       }
     }
   }
@@ -1139,7 +1137,7 @@
         .card-actvity {
           width: 400px;
           padding: 10px;
-          box-shadow: 0px 4px 12px rgba(81, 81, 81, 0.16);
+          box-shadow: 0 4px 12px rgba(81, 81, 81, 0.16);
           border-radius: 5px;
           display: flex;
           flex-direction: column;
@@ -1162,7 +1160,7 @@
         }
       }
       .card-pagination {
-        margin: 16px auto 0 auto;
+        margin: 16px auto 0;
         width: 400px;
         // margin-top: 16px;
         display: flex;
@@ -1199,7 +1197,7 @@
           justify-content: space-between;
           padding: 22px 50px;
           background: #ffffff;
-          box-shadow: 0px 4px 12px rgba(8, 72, 146, 0.16);
+          box-shadow: 0 4px 12px rgba(8, 72, 146, 0.16);
           border-radius: 5px;
         }
         .mt-8 {
@@ -1291,5 +1289,38 @@
   z-index: 0;
 }
 
-.interactive-video-H5P-model-activity {
+.interactive-video-H5P-model-activity {}
+
+.react-tagsinput {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+.react-tagsinput-tag {
+  background-color: #959595;
+  border-radius: 2px;
+  border: 1px solid #959595;
+  color: #ffffff;
+  display: inline-block;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  padding: 5px;
+}
+.react-tagsinput-input {
+  background: transparent;
+  border: 0;
+  color: #777;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 6px;
+  margin-top: 1px;
+  outline: none;
+  padding: 5px;
+  width: 80px;
 }

@@ -38,6 +38,7 @@ export const createIndResourceAction = (metadata, hide) => async (dispatch) => {
       type: 'h5p',
       content: 'place_holder',
       subject_id: metadata?.subject_id,
+      tags: metadata?.tags,
       education_level_id: metadata?.education_level_id,
       author_tag_id: metadata?.author_tag_id,
       description: metadata?.description || undefined,

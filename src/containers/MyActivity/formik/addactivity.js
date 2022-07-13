@@ -22,6 +22,7 @@ import {
 } from "store/actions/admin";
 import ReactMultiSelectCheckboxes from "react-multiselect-checkboxes";
 import { getGlobalColor } from "containers/App/DynamicBrandingApply";
+import TagsInput from "react-tagsinput";
 
 // const withOutExplore = [
 //   "Interactive Video",
@@ -61,6 +62,7 @@ const AddActivity = (props) => {
   const [selecteAuthorTags, setSelecteAuthorTags] = useState(null);
   const [selectedEducationLevel, setSelectedEducationLevel] = useState(null);
   const [exploreCheck, setExploreCheck] = useState(true);
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     // Check if selectedLayout is selected from explore or not
@@ -448,6 +450,21 @@ const AddActivity = (props) => {
                       />
                     </div>
                   </div>
+                  <div	
+                    className="layout-formik-select"	
+                  >	
+                    <div>	
+                      <HeadingText	
+                        text="Tags"	
+                        className="formik-select-title"	
+                      />	
+                      <TagsInput value={tags}  onChange={(e)=>{	
+                        setFieldValue("tags", e);	
+                        setTags(e);	
+                      }}/>	
+                    </div>	
+                  </div>
+                  
                   <div className="formik-uploadimage">
                     <UploadImageV2
                       formRef={formRef}
