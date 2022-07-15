@@ -53,6 +53,7 @@ const onSubmit = async (values, dispatch, props) => {
         team_id: fromTeam && selectedTeam ? selectedTeam?.id : null,
         // eslint-disable-next-line max-len
         thumb_url: 'https://images.pexels.com/photos/593158/pexels-photo-593158.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;fit=crop&amp;h=200&amp;w=280',
+        project_type: project_type
       })
   );
   handleCloseProjectModal(false);
