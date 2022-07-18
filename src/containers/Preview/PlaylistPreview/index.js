@@ -25,6 +25,7 @@ import HeaderLogo from 'assets/images/GCLogo.png';
 import './playlistPreview.scss';
 
 const H5PPreview = lazy(() => import('../../H5PPreview'));
+const H5PIVPreview = lazy(() => import('../../H5PIVPreview'));
 
 function PlaylistPreview(props) {
   const { loading, projectId, playlistId, activityId, playlist, loadHP, loadPlaylist, loadProjectPlaylists } = props;
@@ -125,7 +126,7 @@ function PlaylistPreview(props) {
                 to={
                   projectPreview === 'true'
                     ? // eslint-disable-next-line no-restricted-globals
-                      { pathname: `/org/${organization.currentOrganization?.domain}/project/${selectedPlaylist.project.id}/preview`, state: { from: location.pathname } }
+                    { pathname: `/org/${organization.currentOrganization?.domain}/project/${selectedPlaylist.project.id}/preview`, state: { from: location.pathname } }
                     : `/org/${organization.currentOrganization?.domain}/project/${selectedPlaylist.project.id}`
                 }
               >
@@ -154,7 +155,13 @@ function PlaylistPreview(props) {
               <div className="item-container">
                 {currentActivity && (
                   <Suspense fallback={<div>Loading</div>}>
-                    <H5PPreview showLtiPreview activityId={currentActivity.id} />
+                    {selectedPlaylist.project.project_type ?
+                      (
+                        <H5PIVPreview showLtiPreview activityId={currentActivity.id} allPlaylists={allPlaylists} />
+                      ) : (
+                        <H5PPreview showLtiPreview activityId={currentActivity.id} />
+                      )
+                    }
                   </Suspense>
                 )}
               </div>
