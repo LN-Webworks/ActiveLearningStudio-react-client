@@ -99,6 +99,7 @@ function PlaylistPreview(props) {
   }
 
   const allPlaylists = playlist.playlists;
+  localStorage.setItem('isColumnSummary', selectedPlaylist.is_column_summary)
 
   return (
     <section className="curriki-playlist-preview">

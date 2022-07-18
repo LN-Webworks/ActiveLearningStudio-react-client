@@ -77,6 +77,7 @@ function PlaylistsPage(props) {
   const [playlistIdForSearchingTab, setPlaylistIdForSearchingTab] = useState();
   const [checked, setChecked] = useState(false);
   const [title, setTitle] = useState(false);
+  const [columnSummary, setColumnSummary] = useState(false);
   const [error, setError] = useState(null);
   const projectState = useSelector((state) => state.project);
   const [indexStatus, setIndexStatus] = useState(null);
@@ -319,11 +320,16 @@ function PlaylistsPage(props) {
     if (e.target.value) setError(null);
   };
 
+  const onPlaylistColumnSummaryChange = (e) => {
+    setColumnSummary(e.target.checked);
+    if (e.target.checked) setError(null);
+  };
+
   const handleCreatePlaylistSubmit = async () => {
     // e.preventDefault();
     if (!/^ *$/.test(title) && title) {
       try {
-        await createPlaylist(projectIdFilter, title);
+        await createPlaylist(projectIdFilter, title, columnSummary);
         // history.push(
         //   `/org/${organization.currentOrganization?.domain}/project/${projectIdFilter}`
         // );
@@ -719,55 +725,54 @@ function PlaylistsPage(props) {
 
                                   <div
                                     style={{
-                                      backgroundImage: `url(${
-                                        selectedProject.thumb_url &&
+                                      backgroundImage: `url(${selectedProject.thumb_url &&
                                         selectedProject.thumb_url?.includes(
                                           "pexels.com"
                                         )
-                                          ? selectedProject.thumb_url
-                                          : global.config.resourceUrl +
-                                            selectedProject.thumb_url
-                                      })`,
+                                        ? selectedProject.thumb_url
+                                        : global.config.resourceUrl +
+                                        selectedProject.thumb_url
+                                        })`,
                                       backgroundPosition: "center",
                                       backgroundRepeat: "no-repeat",
                                       backgroundSize: "cover",
                                     }}
                                     // alt="project-img"
                                     className="container-image"
-                                    // src={
-                                    //   selectedProject.thumb_url && selectedProject.thumb_url?.includes('pexels.com')
-                                    //     ? selectedProject.thumb_url
-                                    //     : global.config.resourceUrl + selectedProject.thumb_url
-                                    // }
+                                  // src={
+                                  //   selectedProject.thumb_url && selectedProject.thumb_url?.includes('pexels.com')
+                                  //     ? selectedProject.thumb_url
+                                  //     : global.config.resourceUrl + selectedProject.thumb_url
+                                  // }
                                   />
                                 </div>
                                 {(Object.keys(teamPermission).length
                                   ? teamPermission?.Team?.includes(
-                                      "team:edit-project"
-                                    )
+                                    "team:edit-project"
+                                  )
                                   : permission?.Project?.includes(
-                                      "project:upload-thumb"
-                                    )) && (
-                                  <div className="button-flex-project-images">
-                                    <div
-                                      className="gallery"
-                                      onClick={() => {
-                                        openFile.current.click();
-                                      }}
-                                    >
-                                      <img src={computer} alt="" />
-                                      <p>My device</p>
-                                    </div>
+                                    "project:upload-thumb"
+                                  )) && (
+                                    <div className="button-flex-project-images">
+                                      <div
+                                        className="gallery"
+                                        onClick={() => {
+                                          openFile.current.click();
+                                        }}
+                                      >
+                                        <img src={computer} alt="" />
+                                        <p>My device</p>
+                                      </div>
 
-                                    <div
-                                      className="pexel"
-                                      onClick={() => setModalShow(true)}
-                                    >
-                                      <img src={pexel} alt="pexel" />
-                                      <p>Pexels</p>
+                                      <div
+                                        className="pexel"
+                                        onClick={() => setModalShow(true)}
+                                      >
+                                        <img src={pexel} alt="pexel" />
+                                        <p>Pexels</p>
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
+                                  )}
                               </div>
                             </div>
                             {!editName && (
@@ -794,11 +799,11 @@ function PlaylistsPage(props) {
                             {!editName &&
                               (Object.keys(teamPermission).length
                                 ? teamPermission?.Team?.includes(
-                                    "team:edit-project"
-                                  )
+                                  "team:edit-project"
+                                )
                                 : permission?.Project?.includes(
-                                    "project:edit"
-                                  )) && (
+                                  "project:edit"
+                                )) && (
                                 <>
                                   {/* <img
                                   src={Edit}
@@ -867,11 +872,11 @@ function PlaylistsPage(props) {
                             {!editDescription &&
                               (Object.keys(teamPermission).length
                                 ? teamPermission?.Team?.includes(
-                                    "team:edit-project"
-                                  )
+                                  "team:edit-project"
+                                )
                                 : permission?.Project?.includes(
-                                    "project:edit"
-                                  )) && (
+                                  "project:edit"
+                                )) && (
                                 // <img
                                 //   src={Edit}
                                 //   alt="hk"
@@ -946,61 +951,61 @@ function PlaylistsPage(props) {
                             </div>
                             {selectedProject?.indexing_text !==
                               "NOT REQUESTED" && (
-                              <div className="library-status">
-                                <div
-                                  className={
-                                    selectedProject?.indexing_text ===
-                                    "REQUESTED"
-                                      ? "requested"
-                                      : selectedProject?.indexing_text ===
-                                        "APPROVED"
-                                      ? "approved"
-                                      : "rejected"
-                                  }
-                                >
-                                  {selectedProject?.indexing_text ===
-                                  "REQUESTED" ? (
-                                    <FontAwesomeIcon
-                                      icon="exclamation-circle"
-                                      color={primaryColor}
-                                    />
-                                  ) : selectedProject?.indexing_text ===
-                                    "APPROVED" ? (
-                                    <>
-                                      {/* <img src={Correct} alt="approved" /> */}
-                                      <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 16 16"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z"
-                                          stroke={primaryColor}
-                                          stroke-width="1.5"
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                        />
-                                        <path
-                                          d="M10.836 6.2002L7.23597 9.8002L5.59961 8.16383"
-                                          stroke={primaryColor}
-                                          stroke-width="1.5"
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                        />
-                                      </svg>
-                                    </>
-                                  ) : (
-                                    <FontAwesomeIcon
-                                      icon="times-circle"
-                                      color={primaryColor}
-                                    />
-                                  )}
-                                  {selectedProject?.indexing_text}
+                                <div className="library-status">
+                                  <div
+                                    className={
+                                      selectedProject?.indexing_text ===
+                                        "REQUESTED"
+                                        ? "requested"
+                                        : selectedProject?.indexing_text ===
+                                          "APPROVED"
+                                          ? "approved"
+                                          : "rejected"
+                                    }
+                                  >
+                                    {selectedProject?.indexing_text ===
+                                      "REQUESTED" ? (
+                                      <FontAwesomeIcon
+                                        icon="exclamation-circle"
+                                        color={primaryColor}
+                                      />
+                                    ) : selectedProject?.indexing_text ===
+                                      "APPROVED" ? (
+                                      <>
+                                        {/* <img src={Correct} alt="approved" /> */}
+                                        <svg
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 16 16"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z"
+                                            stroke={primaryColor}
+                                            stroke-width="1.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                          <path
+                                            d="M10.836 6.2002L7.23597 9.8002L5.59961 8.16383"
+                                            stroke={primaryColor}
+                                            stroke-width="1.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                        </svg>
+                                      </>
+                                    ) : (
+                                      <FontAwesomeIcon
+                                        icon="times-circle"
+                                        color={primaryColor}
+                                      />
+                                    )}
+                                    {selectedProject?.indexing_text}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
                           </div>
                         </div>
                         <div className="project-share-previews">
@@ -1020,17 +1025,17 @@ function PlaylistsPage(props) {
                           </div>
                           {(Object.keys(teamPermission).length
                             ? teamPermission?.Team?.includes(
-                                "team:share-project"
-                              )
+                              "team:share-project"
+                            )
                             : permission?.Project?.includes(
-                                "project:share"
-                              )) && (
-                            <Projectsharing
-                              setActiveShared={setActiveShared}
-                              activeShared={activeShared}
-                              selectedProject={selectedProject}
-                            />
-                          )}
+                              "project:share"
+                            )) && (
+                              <Projectsharing
+                                setActiveShared={setActiveShared}
+                                activeShared={activeShared}
+                                selectedProject={selectedProject}
+                              />
+                            )}
                         </div>
                       </div>
                     </div>
@@ -1040,41 +1045,41 @@ function PlaylistsPage(props) {
                       {(Object.keys(teamPermission).length
                         ? teamPermission?.Team?.includes("team:add-playlist")
                         : permission?.Playlist?.includes(
-                            "playlist:create"
-                          )) && (
-                        <button
-                          style={{ whiteSpace: "nowrap" }}
-                          type="button"
-                          className="create-playlist-btn"
-                          onClick={handleShowCreatePlaylistModal}
-                        >
-                          {/* <img src={AddBtn} alt="add" className="mr-2" /> */}
-                          <svg
-                            width="10"
-                            height="10"
-                            viewBox="0 0 10 10"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="mr-2"
+                          "playlist:create"
+                        )) && (
+                          <button
+                            style={{ whiteSpace: "nowrap" }}
+                            type="button"
+                            className="create-playlist-btn"
+                            onClick={handleShowCreatePlaylistModal}
                           >
-                            <path
-                              d="M1 5C1.00573 5 6.33572 5.00005 9 5.00008"
-                              stroke={primaryColor}
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M5 9C5 8.99427 5 3.66428 5 1"
-                              stroke={primaryColor}
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                          Create new playlist
-                        </button>
-                      )}
+                            {/* <img src={AddBtn} alt="add" className="mr-2" /> */}
+                            <svg
+                              width="10"
+                              height="10"
+                              viewBox="0 0 10 10"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="mr-2"
+                            >
+                              <path
+                                d="M1 5C1.00573 5 6.33572 5.00005 9 5.00008"
+                                stroke={primaryColor}
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M5 9C5 8.99427 5 3.66428 5 1"
+                                stroke={primaryColor}
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            Create new playlist
+                          </button>
+                        )}
                     </div>
                     {!!playlists && playlists.length > 0 ? (
                       <DragDropContext onDragEnd={onDragEnd}>
@@ -1150,6 +1155,7 @@ function PlaylistsPage(props) {
           handleHideCreatePlaylistModal={handleHideCreatePlaylistModal}
           handleCreatePlaylistSubmit={handleCreatePlaylistSubmit}
           onPlaylistTitleChange={onPlaylistTitleChange}
+          onPlaylistColumnSummaryChange={onPlaylistColumnSummaryChange}
           error={error}
         />
       )}
@@ -1250,7 +1256,7 @@ PlaylistsPage.defaultProps = {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  createPlaylist: (id, title) => dispatch(createPlaylistAction(id, title)),
+  createPlaylist: (id, title, columnSummary) => dispatch(createPlaylistAction(id, title, columnSummary)),
   deletePlaylist: (projectId, id) =>
     dispatch(deletePlaylistAction(projectId, id)),
   showCreatePlaylistModal: () => dispatch(showCreatePlaylistModalAction()),

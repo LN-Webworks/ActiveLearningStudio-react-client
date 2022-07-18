@@ -8,11 +8,11 @@ import playlistService from "services/playlist.service";
 import * as actionTypes from "../actionTypes";
 import { toast } from "react-toastify";
 
-export const createPlaylistAction = (projectId, title) => async (dispatch) => {
+export const createPlaylistAction = (projectId, title, columnSummary) => async (dispatch) => {
   try {
     dispatch({ type: actionTypes.CREATE_PLAYLIST_REQUEST });
 
-    const { playlist } = await playlistService.create(projectId, { title });
+    const { playlist } = await playlistService.create(projectId, { title, columnSummary });
 
     dispatch({
       type: actionTypes.CREATE_PLAYLIST_SUCCESS,
