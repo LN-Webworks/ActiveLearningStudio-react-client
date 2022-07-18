@@ -30,6 +30,7 @@ const ResourceCard = (props) => {
   const dispatch = useDispatch();
   const parser = new DOMParser()
   let resourceTitle = parser.parseFromString(resource.metadata && resource.metadata.title !== undefined ? resource.metadata.title : resource.title, 'text/html').body.textContent;
+
   return (
     <Draggable key={resource.id} draggableId={`${resource.id}`} index={index}>
       {(provided) => (
@@ -41,7 +42,8 @@ const ResourceCard = (props) => {
                 <div
                   className="activity-thumb"
                   style={{
-                    backgroundImage: resource.thumb_url?.includes('pexels.com') ? `url(${resource.thumb_url})` : `url(${global.config.resourceUrl}${resource.thumb_url})`,
+                    backgroundImage: `url(${resource.thumb_url})`,
+                    // backgroundImage: resource.thumb_url?.includes('pexels.com') ? `url(${resource.thumb_url})` : `url(${global.config.resourceUrl}${resource.thumb_url})`,
                   }}
                 />
                 {/* </Link> */}

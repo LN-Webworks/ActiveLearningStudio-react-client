@@ -238,11 +238,28 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
   const insertedH5pResource = await resourceService.h5pToken(data);
   if (!insertedH5pResource.fail) {
     const resource = insertedH5pResource;
-
+    console.log('meta data', metadata);
+    let thumb_url = metadata?.thumb_url;
+    if(metadata?.source_type === "Brightcove"){
+        var config = {
+          method: 'get',
+          url: 'https://edge.api.brightcove.com/playback/v1/accounts/6282550302001/videos/6309661352112',
+          headers: { 
+            'accept': 'application/json;pk=BCpkADawqM31x7kJaN_r7tqLe8S1JtnH4asUDLCvch8pq0qJx4oHsWCpm5No1F-cP8fwzi2PBgse1y4L_1LhaAnQ3KNNB3ztRbC8WjWK_iEYbDEoTZDtGAZ1rlMzemN3X2YWq6rSVj6Zz74F'
+          }
+        };
+        thumb_url = await axios(config)
+        .then(function (response) {
+          return response.data.thumbnail
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
     const activity = {
       h5p_content_id: resource.id,
       playlist_id: playlistId,
-      thumb_url: metadata?.thumb_url,
+      thumb_url: thumb_url,
       action: 'create',
       title: unescape(metadata?.title),
       type: 'h5p',
@@ -254,6 +271,7 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
       source_type: metadata?.source_type || undefined,
       source_url: metadata?.source_url || undefined,
     };
+    
     if (type === 'videoModal' && !reverseType) {
       const centralizedState = store.getState();
       const {

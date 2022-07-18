@@ -63,7 +63,7 @@ function ProjectPreview(props) {
     arrows: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 5.5,
+    slidesToShow: 4,
     slidesToScroll: 1,
   };
 
@@ -74,6 +74,7 @@ function ProjectPreview(props) {
   let playlists;
 
   if (currentProject) {
+
     playlists =
       playlistState.playlists &&
       playlistState.playlists.map((playlist, counter) => {
@@ -89,6 +90,7 @@ function ProjectPreview(props) {
                   key={activity.id}
                   playlist={playlist}
                   teamPermission={teamPermission || {}}
+                  project_type = {playlist.project.project_type}
                 />
               )
           );
@@ -101,10 +103,10 @@ function ProjectPreview(props) {
             </div>
           );
         }
-        console.log(editTitle);
         return (
           (Object.keys(teamPermission).length ? teamPermission?.Team?.includes('team:view-playlist') : permission?.Playlist?.includes('playlist:view')) && (
             <div className="check-each" key={playlist.id}>
+              
               <button
                 type="button"
                 ref={(el) => {
@@ -120,7 +122,9 @@ function ProjectPreview(props) {
                   }
                 }}
               >
-                <FontAwesomeIcon icon={collapsed[counter] ? 'minus' : 'plus'} className="mr-2" />
+                { currentProject.project_type === '' && 
+                  <FontAwesomeIcon icon={collapsed[counter] ? 'minus' : 'plus'} className="mr-2" />
+                }
                 {editTitle && playlist ? (
                   <>
                     <input name="playlist-title" defaultValue={playlist.title} ref={editFieldRef} />
@@ -164,26 +168,57 @@ function ProjectPreview(props) {
     <div>
       {currentProject && (
         <>
+        {currentProject.project_type ?
+          <div className="container">
+            <div className="banner-block">
+              <div className="custom-container">
+                <div className='row'>
+                  <div className='col-md-9'>
+                    <div className="project-title-desc">
+                    <div onClick={()=> console.log('curr', currentProject.project_type)} className="project-title">
+                      <h2>{currentProject.name}</h2>
+                    </div>
+                    <div className="project description">
+                      <p className="expandiv">{currentProject.description}</p>
+                    </div>
+                    </div>
+                  </div>
+                  <div className='col-md-3'>
+                    <div className="scene-img">
+                      <Link to={`/org/${organization.currentOrganization?.domain}/project/${currentProject.id}`}>
+                        {!!currentProject.thumb_url && currentProject.thumb_url.includes('pexels.com') ? (
+                          <img onClick={()=> console.log('curr', currentProject)} src={currentProject.thumb_url} alt="thumbnail" />
+                        ) : (
+                          <img src={global.config.resourceUrl + currentProject.thumb_url} alt="thumbnail" />
+                        )}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        : 
           <div className="container">
             <div className="scene flex-wrap">
               <div className="project-details">
-                <div className="scene-img">
-                  <Link to={`/org/${organization.currentOrganization?.domain}/project/${currentProject.id}`}>
-                    {!!currentProject.thumb_url && currentProject.thumb_url.includes('pexels.com') ? (
-                      <img src={currentProject.thumb_url} alt="thumbnail" />
-                    ) : (
-                      <img src={global.config.resourceUrl + currentProject.thumb_url} alt="thumbnail" />
-                    )}
-                  </Link>
-                </div>
-                <div className="project-title-desc">
-                  <div className="project-title">
-                    <h2>{currentProject.name}</h2>
-                  </div>
-                  <div className="project description">
-                    <p className="expandiv">{currentProject.description}</p>
-                  </div>
-                </div>
+                    <div className="scene-img">
+                      <Link to={`/org/${organization.currentOrganization?.domain}/project/${currentProject.id}`}>
+                        {!!currentProject.thumb_url && currentProject.thumb_url.includes('pexels.com') ? (
+                          <img onClick={()=> console.log('curr', currentProject)} src={currentProject.thumb_url} alt="thumbnail" />
+                        ) : (
+                          <img src={global.config.resourceUrl + currentProject.thumb_url} alt="thumbnail" />
+                        )}
+                      </Link>
+                    </div>
+                    <div className="project-title-desc">
+                      <div onClick={()=> console.log('curr', currentProject.project_type)} className="project-title">
+                        <h2>{currentProject.name}</h2>
+                      </div>
+                      <div className="project description">
+                        <p className="expandiv">{currentProject.description}</p>
+                      </div>
+                    </div>
               </div>
               <div className="sce_cont">
                 <ul className="bar_list flex-div check">
@@ -233,7 +268,24 @@ function ProjectPreview(props) {
               </div>
             </div>
           </div>
-
+        }
+        {
+          currentProject.project_type ? 
+          <div className="container">
+            <div className="playlist-div playlist-card-background">
+              <div className='custom-container'>
+                <div className="playlist-title-div">
+                  <div className="title-md playlist-title-card">Playlists</div>
+                </div>
+                <div className="all-playlist check-custom">
+                  <div className="slider-block" id="custom_accordi">
+                    {playlists}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          :
           <div className="container">
             <div className="playlist-div">
               <div className="playlist-title-div">
@@ -246,6 +298,8 @@ function ProjectPreview(props) {
               </div>
             </div>
           </div>
+        }
+          
           {showDeletePlaylistPopup && (
             <DeletePopup
               ui={ui}
