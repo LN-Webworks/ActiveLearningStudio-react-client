@@ -15,7 +15,8 @@ import { createProjectAction, updateProjectAction, uploadProjectThumbnailAction,
 import InputField from 'components/InputField';
 import TextareaField from 'components/TextareaField';
 import PexelsAPI from 'components/models/pexels';
-
+import ReactMultiSelectCheckboxes from "react-multiselect-checkboxes";
+import HeadingText from "utils/HeadingText/headingtext";
 import './style.scss';
 
 const maxLength80 = maxLength(80);
@@ -23,7 +24,7 @@ const maxLength1000 = maxLength(1000);
 
 let imageValidation = '';
 const projectShare = true;
-
+let project_type = ''
 const onSubmit = async (values, dispatch, props) => {
   const {
     history,
@@ -41,7 +42,8 @@ const onSubmit = async (values, dispatch, props) => {
         thumb_url: project?.thumbUrl,
         is_public: projectShare,
         organization_visibility_type_id: 1,
-        team_id: fromTeam && selectedTeam ? selectedTeam?.id : null
+        team_id: fromTeam && selectedTeam ? selectedTeam?.id : null,
+        project_type: project_type
       })
       : createProjectAction({
         name,
@@ -51,6 +53,7 @@ const onSubmit = async (values, dispatch, props) => {
         team_id: fromTeam && selectedTeam ? selectedTeam?.id : null,
         // eslint-disable-next-line max-len
         thumb_url: 'https://images.pexels.com/photos/593158/pexels-photo-593158.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;fit=crop&amp;h=200&amp;w=280',
+        project_type: project_type
       })
   );
   handleCloseProjectModal(false);
@@ -91,6 +94,10 @@ let CreateProjectPopup = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const openFile = useRef();
   const [visibilityTypeArray, setVisibilityTypeArray] = useState([]);
+  const [projectType, setProjectType] = useState([{
+    value: "Gallery", label: "Gallery"
+  }]);
+  const [selectedProject, setSelectedProject] = useState('');
   // remove popup when escape is pressed
   const escFunction = useCallback(
     (event) => {
@@ -144,6 +151,24 @@ let CreateProjectPopup = (props) => {
           <div className="project-description">
             <Field name="description" component={TextareaField} validate={[required, maxLength1000]} autoComplete="new-password" label="Project Description" />
           </div>
+
+          <div onClick={()=> console.log('selectedProject',project_type)} className="formik-select">
+              <HeadingText
+                text="Page Layout"
+                className="formik-select-title"
+              />
+              <ReactMultiSelectCheckboxes
+                name="project_type"
+                hideSearch
+                options={projectType}
+                onChange={(e) => {
+                  setSelectedProject(e);
+                  project_type = e[0].label
+                }}
+                value={selectedProject.value}
+              />
+            </div>
+
           <div className="upload-thumbnail check">
             <div className="upload_placeholder">
               <label style={{ display: 'none' }}>
