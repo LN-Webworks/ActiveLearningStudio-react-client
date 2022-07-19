@@ -10,28 +10,40 @@ import Card from 'react-bootstrap/Card';
 import { useSelector } from 'react-redux';
 
 const H5PIVSidebar = (props) => {
+  const [isOpen, setOpen] = React.useState(false);
   const { allPlaylists, activeActivityId } = props;
   console.log({ act: activeActivityId });
   const organization = useSelector((state) => state.organization);
   // const [activeKey, setActiveKey] = useState();
   return (
-    <div className="sidebar-wrapper px-4">
+    <div className="sidebar-wrapper">
       <div className="project-heading-wrapper">
         <h3>
           <div className="sidebar-project-name d-flex justify-content-between">
-            {/* {allPlaylists[0].project.name} */}
-            <FontAwesomeIcon icon="arrow-left" />
+            {allPlaylists[0].project.name}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 16L0 8L8 0L9.425 1.4L3.825 7H16V9H3.825L9.425 14.6L8 16Z" fill="#515151" />
+            </svg>
           </div>
         </h3>
       </div>
 
-      <Accordion>
+      <Accordion className="sidebar-accordion">
         {allPlaylists.map((playlist, count) => (
           <Card>
             <ContextAwareToggle
               eventKey={count + 1}
+              classNames={`${isOpen ? 'active' : ''}`}
             >
-              {playlist.title}
+              <span
+                onClick={() => {
+                  console.log('im clicked');
+                  setOpen(!isOpen);
+                }}
+              >
+                {playlist.title}
+
+              </span>
             </ContextAwareToggle>
             <Accordion.Collapse eventKey={count + 1}>
               <Card.Body>
@@ -54,7 +66,9 @@ const H5PIVSidebar = (props) => {
   );
 };
 
-export const ContextAwareToggle = ({ children, eventKey, callback }) => {
+export const ContextAwareToggle = ({
+  children, eventKey, callback, classNames,
+}) => {
   const currentEventKey = useContext(AccordionContext);
   const decoratedOnClick = useAccordionToggle(
     eventKey,
@@ -64,7 +78,7 @@ export const ContextAwareToggle = ({ children, eventKey, callback }) => {
 
   return (
     <div
-      className="accordion-header-wrapper d-flex justify-content-between align-items-center"
+      className={`accordion-header-wrapper d-flex justify-content-between align-items-center ${classNames}`}
       onClick={() => decoratedOnClick()}
     >
       {children}
@@ -82,6 +96,11 @@ ContextAwareToggle.propTypes = {
   children: PropTypes.any.isRequired,
   eventKey: PropTypes.any.isRequired,
   callback: PropTypes.func.isRequired,
+  classNames: PropTypes.string,
+};
+
+ContextAwareToggle.defaultProps = {
+  classNames: [],
 };
 
 export default H5PIVSidebar;

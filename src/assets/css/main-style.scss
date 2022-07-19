@@ -1,13 +1,16 @@
 @import 'index';
 @import 'react-toastify/dist/ReactToastify.css';
 @import '~bootstrap/scss/bootstrap';
+@import 'accordion';
+@import 'layout';
+@import 'sidebar';
 
 body {
   margin: 0;
   background-color: #eee;
   font-size: 14px;
   color: #777;
-  font-family: $rubik !important;
+  font-family: $rubik  !important;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -266,10 +269,12 @@ code {
   padding: 25px;
   border-radius: 5px;
 }
+
 .flex-center {
   display: flex;
   justify-content: center;
 }
+
 .curriki-btn-extra {
   border: 0;
   border-radius: 0.25em;
@@ -291,6 +296,7 @@ code {
 .dropdown-menu.check.overflow-enhancment {
   left: -20px !important;
   top: 22px !important;
+
   a {
     word-break: break-all !important;
   }
@@ -324,16 +330,16 @@ code {
 
 .add-role-form {
   select {
-  width: 80px !important;
-  height: 28px !important;
-  background: #e5eeff;
-  border-radius: 4px;
-  font-family: "rubic";
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 20px;
-  color: #084892;
-  border: none !important;
+    width: 80px !important;
+    height: 28px !important;
+    background: #e5eeff;
+    border-radius: 4px;
+    font-family: "rubic";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    color: #084892;
+    border: none !important;
   }
 }
