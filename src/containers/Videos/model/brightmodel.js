@@ -15,7 +15,7 @@ import { getBrightCMS, getBrightVideos, getBrightVideosSearch, getKalturaVideos,
 import { getGlobalColor } from 'containers/App/DynamicBrandingApply';
 const BrightcoveModel = (props) => {
   const dispatch = useDispatch();
-  const { platform, showSidebar, setSelectedVideoIdKaltura, selectedVideoIdVimeo } = props;
+  const { platform, showSidebar, setSelectedVideoIdKaltura, selectedVideoIdVimeo, setSelectedVideoThumbnail,setSelectedVideoDuration} = props;
   const [cms, setcms] = useState([]);
   const [kaltura, setkaltura] = useState(null);
   const [vimeo, setVimeo] = useState(null);
@@ -36,6 +36,7 @@ const BrightcoveModel = (props) => {
       } else if (platform == 'Kaltura') {
         setActiveCms(null);
         const result = await dispatch(getKalturaVideos());
+        console.log('res->', result);
         if (result?.errors) {
           setkaltura([]);
           setError('No record Found');
@@ -83,6 +84,7 @@ const BrightcoveModel = (props) => {
       payload: activeCms,
     });
   }, [activeCms]);
+ 
   const primaryColor = getGlobalColor('--main-primary-color');
   return (
     <Modal {...props} size="xl" aria-labelledby="contained-modal-title-vcenter" centered className="preview-layout-model">
@@ -234,6 +236,8 @@ const BrightcoveModel = (props) => {
                                               name="video"
                                               onChange={() => {
                                                 props.setSelectedVideoId(data.id);
+                                                setSelectedVideoThumbnail(data.images.thumbnail.src)
+                                                setSelectedVideoDuration(data.duration);
                                               }}
                                               type="radio"
                                             />
@@ -309,6 +313,8 @@ const BrightcoveModel = (props) => {
                                               name="video"
                                               onChange={() => {
                                                 setSelectedVideoIdKaltura(data.dataUrl);
+                                                setSelectedVideoThumbnail(data.thumbnailUrl);
+                                                setSelectedVideoDuration(data.msDuration);
                                               }}
                                               type="radio"
                                             />
@@ -387,6 +393,8 @@ const BrightcoveModel = (props) => {
                                               name="video"
                                               onChange={() => {
                                                 props.setSelectedVideoIdVimeo(data.link);
+                                                setSelectedVideoThumbnail(data.pictures.base_link);
+                                                setSelectedVideoDuration(data.duration);
                                               }}
                                               type="radio"
                                               checked={selectedVideoIdVimeo === data.link ? true : false}

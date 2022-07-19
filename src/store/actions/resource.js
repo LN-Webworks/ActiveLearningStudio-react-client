@@ -240,21 +240,15 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
     const resource = insertedH5pResource;
     console.log('meta data', metadata);
     let thumb_url = metadata?.thumb_url;
-    if(metadata?.source_type === "Brightcove"){
-        var config = {
-          method: 'get',
-          url: 'https://edge.api.brightcove.com/playback/v1/accounts/6282550302001/videos/6309661352112',
-          headers: { 
-            'accept': 'application/json;pk=BCpkADawqM31x7kJaN_r7tqLe8S1JtnH4asUDLCvch8pq0qJx4oHsWCpm5No1F-cP8fwzi2PBgse1y4L_1LhaAnQ3KNNB3ztRbC8WjWK_iEYbDEoTZDtGAZ1rlMzemN3X2YWq6rSVj6Zz74F'
-          }
-        };
-        thumb_url = await axios(config)
-        .then(function (response) {
-          return response.data.thumbnail
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    let duration = '';
+    console.log('metadata', metadata);
+    if(metadata && metadata.source_type){
+      if(localStorage.getItem('VideoThumbnail')){
+        thumb_url = localStorage.getItem('VideoThumbnail');
+      }
+      if(localStorage.getItem('VideoDuration')){
+        duration = localStorage.getItem('VideoDuration');
+      }
     }
     const activity = {
       h5p_content_id: resource.id,
@@ -270,6 +264,7 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
       description: metadata?.description || undefined,
       source_type: metadata?.source_type || undefined,
       source_url: metadata?.source_url || undefined,
+      duration: duration
     };
     
     if (type === 'videoModal' && !reverseType) {

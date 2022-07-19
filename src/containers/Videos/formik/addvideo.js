@@ -47,6 +47,8 @@ const AddVideo = ({
   const organization = useSelector((state) => state.organization);
   const [modalShow, setModalShow] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState("");
+  const [selectedVideoThumbnail, setSelectedVideoThumbnail] = useState("");
+  const [selectedVideoDuration, setSelectedVideoDuration] = useState("");
   const [selectedVideoIdKaltura, setSelectedVideoIdKaltura] = useState("");
   const [selectedVideoIdVimeo, setSelectedVideoIdVimeo] = useState("");
   const [selectedVideoIdUpload, setSelectedVideoIdUpload] = useState("");
@@ -72,7 +74,14 @@ const AddVideo = ({
       });
     }
   }, [mediaSources]);
+
+  useEffect(()=>{
+    localStorage.setItem('VideoThumbnail', selectedVideoThumbnail);
+    localStorage.setItem('VideoDuration', selectedVideoDuration);
+  }, [selectedVideoThumbnail])
+
   const primaryColor = getGlobalColor("--main-primary-color");
+  console.log('platform', platform);
   return (
     <>
       <BrightcoveModel
@@ -82,6 +91,8 @@ const AddVideo = ({
         }}
         setSelectedVideoId={setSelectedVideoId}
         setSelectedVideoIdKaltura={setSelectedVideoIdKaltura}
+        setSelectedVideoThumbnail={setSelectedVideoThumbnail}
+        setSelectedVideoDuration={setSelectedVideoDuration}
         setSelectedVideoIdVimeo={setSelectedVideoIdVimeo}
         selectedVideoIdVimeo={selectedVideoIdVimeo}
         showSidebar={showSidebar}
@@ -381,6 +392,7 @@ const AddVideo = ({
                     type={AddKaltura}
                     setScreenStatus={setScreenStatus}
                     selectedVideoId={selectedVideoIdKaltura}
+                    selectedVideoThumbnail={selectedVideoThumbnail}
                     platform={platform}
                     placeholder="Enter a video url"
                   />
@@ -404,6 +416,7 @@ const AddVideo = ({
                       type={AddKaltura}
                       setScreenStatus={setScreenStatus}
                       selectedVideoId={selectedVideoIdKaltura}
+                      selectedVideoThumbnail={selectedVideoThumbnail}
                       platform={platform}
                       editVideo={editVideo?.source_url}
                       placeholder="Enter a video url"
@@ -543,6 +556,8 @@ const FormikVideo = ({
   editVideo,
   showback,
   selectedVideoId,
+  selectedVideoThumbnail,
+  setSelectedVideoThumbnail,
   showBrowse,
   setScreenStatus,
   uploadFile,
@@ -554,6 +569,7 @@ const FormikVideo = ({
   const dispatch = useDispatch();
   const imgUpload = useRef();
   const [uploadedFile, setUploadedFile] = useState("");
+  const [uploadedUrl, setUploadedUrl] = useState("");
   const [record, setRecord] = useState(false);
   const [selectTab, setSelectTab] = useState("enterscreen");
   const [play, setPlay] = useState(false);
@@ -982,6 +998,7 @@ const FormikVideo = ({
                       type="file"
                       name="h5p_file"
                       id="h5p-file"
+                      accept="video/mp4,video/x-m4v,video/*"
                       className="laravel-h5p-upload form-control"
                       onChange={async (e) => {
                         e.preventDefault();
@@ -1015,8 +1032,8 @@ const FormikVideo = ({
                           );
                           const result = await videoService.uploadvideoDirect(
                             formData
-                          );
-                          Swal.close();
+                            );
+                            Swal.close();
                           if (result.success === false) {
                             Swal.fire({
                               title: result?.message,
@@ -1024,6 +1041,7 @@ const FormikVideo = ({
                           } else {
                             setUploadedFile(h5pFile.name);
                             setSelectedVideoId(result.path);
+                            setUploadedUrl(result.path);
                             setFieldValue("videoUrl", result.path);
                           }
                         }
