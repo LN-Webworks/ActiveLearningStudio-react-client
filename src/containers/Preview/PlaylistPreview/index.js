@@ -80,11 +80,11 @@ function PlaylistPreview(props) {
     }
   }
 
-  useEffect(() => {
-    if (currentActivity) {
-      setCurrentActiveId(currentActivity.id)
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (currentActivity) {
+  //     setCurrentActiveId(currentActivity.id)
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (loading && currentActivityId) {
@@ -152,14 +152,14 @@ function PlaylistPreview(props) {
               <div className="item-container">
                 {currentActivity && (
                   <Suspense fallback={<div>Loading</div>}>
-                    {!selectedPlaylist.project.project_type ?
+                    {selectedPlaylist.project.project_type ?
                       (
                         <div className="row">
                           <div className="col-md-4 sidebar-wrap">
-                            <H5PIVSidebar allPlaylists={allPlaylists} activeActivityId={currentActivity.id} />
+                            <H5PIVSidebar allPlaylists={allPlaylists} activeActivityId={currentActiveId ? currentActiveId : currentActivity.id} setCurrentActiveId={setCurrentActiveId} />
                           </div>
                           <div className="col-md-8 right-content-wrap">
-                            <H5PIVPreview showLtiPreview activityId={currentActivity.id} allPlaylists={allPlaylists} />
+                            <H5PIVPreview showLtiPreview activityId={currentActiveId ? currentActiveId : currentActivity.id} allPlaylists={allPlaylists} />
                           </div>
                         </div>
                       ) : (

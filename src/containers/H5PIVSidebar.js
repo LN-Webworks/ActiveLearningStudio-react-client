@@ -2,25 +2,29 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './SidebarStyle/style.scss';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import Accordion from 'react-bootstrap/Accordion';
 import AccordionContext from 'react-bootstrap/AccordionContext';
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 import Card from 'react-bootstrap/Card';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 const H5PIVSidebar = (props) => {
   const [isOpen, setOpen] = React.useState(false);
-  const { allPlaylists, activeActivityId } = props;
+  const { allPlaylists, activeActivityId, setCurrentActiveId } = props;
   console.log({ act: activeActivityId });
-  const organization = useSelector((state) => state.organization);
+  // const organization = useSelector((state) => state.organization);
   // const [activeKey, setActiveKey] = useState();
+  const handleActivityState = (activityId) => {
+    localStorage.setItem('projectPreview', true);
+    setCurrentActiveId(activityId);
+  };
   return (
     <div className="sidebar-wrapper">
       <div className="project-heading-wrapper">
         <h3>
           <div className="sidebar-project-name d-flex justify-content-between">
-            {allPlaylists[0].project.name}
+            {allPlaylists[0]?.project?.name}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 16L0 8L8 0L9.425 1.4L3.825 7H16V9H3.825L9.425 14.6L8 16Z" fill="#515151" />
             </svg>
@@ -37,7 +41,6 @@ const H5PIVSidebar = (props) => {
             >
               <span
                 onClick={() => {
-                  console.log('im clicked');
                   setOpen(!isOpen);
                 }}
               >
@@ -49,12 +52,12 @@ const H5PIVSidebar = (props) => {
               <Card.Body>
                 {playlist.activities.map((activity) => (
                   <div className={`sidebar-links ${activeActivityId === activity.id ? 'active' : ''}`}>
-                    <Link
-                      to={`/org/${organization.currentOrganization?.domain}/project/${playlist.project.id}/playlist/${playlist.id}/activity/${activity.id}/preview?view=activity`}
-                      onClick={() => localStorage.setItem('projectPreview', true)}
+                    <a
+                      href={(e) => e.preventDefault()}
+                      onClick={() => handleActivityState(activity.id)}
                     >
                       {activity.title}
-                    </Link>
+                    </a>
                   </div>
                 ))}
               </Card.Body>
@@ -90,6 +93,7 @@ export const ContextAwareToggle = ({
 H5PIVSidebar.propTypes = {
   allPlaylists: PropTypes.any.isRequired,
   activeActivityId: PropTypes.any.isRequired,
+  setCurrentActiveId: PropTypes.func.isRequired,
 };
 
 ContextAwareToggle.propTypes = {
