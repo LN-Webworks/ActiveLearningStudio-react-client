@@ -42,7 +42,7 @@ function PreviousLink(props) {
   }
 
   return (
-    <div className="slider-hover-section">
+    <div className="slider-hover-section prev">
       <Link
         onClick={() => {
           if (setH5pCurrentActivity) {
@@ -50,9 +50,9 @@ function PreviousLink(props) {
           }
         }}
         to={setH5pCurrentActivity ? void 0 : prevLink}
-      >
+      > <FontAwesomeIcon icon="chevron-left" />
         Previous
-        <FontAwesomeIcon icon="chevron-left" />
+
       </Link>
 
       <div className={`hover-control-caption pointer-cursor${previousResource ? '' : ' no-data prev'}`}>
