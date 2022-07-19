@@ -21,7 +21,7 @@ import PreviousLink from './components/PreviousLink';
 import NextLink from './components/NextLink';
 
 import HeaderLogo from 'assets/images/GCLogo.png';
-
+import H5PIVSidebar from '../../../containers/H5PIVSidebar'
 import './playlistPreview.scss';
 
 const H5PPreview = lazy(() => import('../../H5PPreview'));
@@ -33,6 +33,7 @@ function PlaylistPreview(props) {
   const { teamPermission } = useSelector((state) => state.team);
   const [openPlaylistMenu, setPlaylistMenu] = useState(true);
   const query = QueryString.parse(window.location.search);
+  const [currentActiveId, setCurrentActiveId] = useState();
 
   const projectPreview = localStorage.getItem('projectPreview');
   // const history = useHistory();
@@ -78,6 +79,12 @@ function PlaylistPreview(props) {
       }
     }
   }
+
+  useEffect(() => {
+    if (currentActivity) {
+      setCurrentActiveId(currentActivity.id)
+    }
+  }, [])
 
   useEffect(() => {
     if (loading && currentActivityId) {
@@ -157,7 +164,14 @@ function PlaylistPreview(props) {
                   <Suspense fallback={<div>Loading</div>}>
                     {selectedPlaylist.project.project_type ?
                       (
-                        <H5PIVPreview showLtiPreview activityId={currentActivity.id} allPlaylists={allPlaylists} />
+                        <div className="row">
+                          <div className="col-md-4">
+                            <H5PIVSidebar allPlaylists={allPlaylists} activeActivityId={currentActivity.id} />
+                          </div>
+                          <div className="col-md-8">
+                            <H5PIVPreview showLtiPreview activityId={currentActivity.id} allPlaylists={allPlaylists} />
+                          </div>
+                        </div>
                       ) : (
                         <H5PPreview showLtiPreview activityId={currentActivity.id} />
                       )

@@ -10,7 +10,7 @@ import videoServices from 'services/videos.services';
 import indServices from 'services/indActivities.service';
 import * as xAPIHelper from 'helpers/xapi';
 import useH5PPreviewResizer from '../helpers/useH5PPreviewResizer';
-import H5PIVSidebar from './H5PIVSidebar';
+// import H5PIVSidebar from './H5PIVSidebar';
 
 let counter = 0;
 
@@ -216,41 +216,36 @@ const H5PIVPreview = (props) => {
   }, [currikiH5PWrapper, activityState.h5pObject]);
 
   return (
-    <div className="row">
-      <div className="col-md-4">
-        <H5PIVSidebar allPlaylists={allPlaylists} activeActivityId={activityId} />
-      </div>
-      <div className="col-md-8">
-        {!loading ? (
-          <div
-            id="curriki-h5p-wrapper"
-            ref={(el) => {
-              if (el) {
-                currikiH5PWrapper.current = el;
-              }
-            }}
-            className="interactivevideoreferce"
-          >
-            <div className="loader_gif" style={{ color: 'black' }}>
-              Unable to Load Activity
-            </div>
+    <>
+      {!loading ? (
+        <div
+          id="curriki-h5p-wrapper"
+          ref={(el) => {
+            if (el) {
+              currikiH5PWrapper.current = el;
+            }
+          }}
+          className="interactivevideoreferce"
+        >
+          <div className="loader_gif" style={{ color: 'black' }}>
+            Unable to Load Activity
           </div>
-        ) : (
-          <div
-            id="curriki-h5p-wrapper"
-            ref={(el) => {
-              if (el) {
-                currikiH5PWrapper.current = el;
-              }
-            }}
-          >
-            <div className="loader_gif">
-              <img src={gifLoader} alt="" />
-            </div>
+        </div>
+      ) : (
+        <div
+          id="curriki-h5p-wrapper"
+          ref={(el) => {
+            if (el) {
+              currikiH5PWrapper.current = el;
+            }
+          }}
+        >
+          <div className="loader_gif">
+            <img src={gifLoader} alt="" />
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 
