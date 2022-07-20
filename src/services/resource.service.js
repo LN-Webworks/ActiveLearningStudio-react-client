@@ -338,4 +338,5 @@ export default {
   getSingleLayout,
   searchPreviewActivity,
   searchPreviewIndependentActivity,
+  uploadImage
 };

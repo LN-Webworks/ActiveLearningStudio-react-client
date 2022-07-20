@@ -236,18 +236,19 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
     icon: '',
   });
   const insertedH5pResource = await resourceService.h5pToken(data);
+
   if (!insertedH5pResource.fail) {
     const resource = insertedH5pResource;
-    console.log('meta data', metadata);
     let thumb_url = metadata?.thumb_url;
     let duration = '';
-    console.log('metadata', metadata);
     if(metadata && metadata.source_type){
-      if(localStorage.getItem('VideoThumbnail')){
-        thumb_url = localStorage.getItem('VideoThumbnail');
-      }
-      if(localStorage.getItem('VideoDuration')){
-        duration = localStorage.getItem('VideoDuration');
+      if(metadata.custom_thumbnail){}else{
+        if(localStorage.getItem('VideoThumbnail')){
+          thumb_url = localStorage.getItem('VideoThumbnail');
+        }
+        if(localStorage.getItem('VideoDuration')){
+          duration = localStorage.getItem('VideoDuration');
+        }
       }
     }
     const activity = {
@@ -264,7 +265,8 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
       description: metadata?.description || undefined,
       source_type: metadata?.source_type || undefined,
       source_url: metadata?.source_url || undefined,
-      duration: duration
+      duration: duration,
+      custom_thumbnail: metadata?.custom_thumbnail
     };
     
     if (type === 'videoModal' && !reverseType) {

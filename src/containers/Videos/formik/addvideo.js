@@ -36,6 +36,7 @@ import {
   faVideoSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { faWindowClose } from "@fortawesome/free-regular-svg-icons";
+import resourceService from 'services/resource.service';
 
 const AddVideo = ({
   setScreenStatus,
@@ -81,7 +82,6 @@ const AddVideo = ({
   }, [selectedVideoThumbnail])
 
   const primaryColor = getGlobalColor("--main-primary-color");
-  console.log('platform', platform);
   return (
     <>
       <BrightcoveModel
@@ -574,6 +574,8 @@ const FormikVideo = ({
   const [selectTab, setSelectTab] = useState("enterscreen");
   const [play, setPlay] = useState(false);
   const [startRecord, setStartRecord] = useState(false);
+  const [selectedVideoDuration, setSelectedVideoDuration] = useState("");
+  const [selectedThumbnail, setSelectedThumbnail] = useState("");
 
   const formRef = useRef();
   useEffect(() => {
@@ -582,6 +584,102 @@ const FormikVideo = ({
     }
   }, [editVideo, platform]);
   const primaryColor = getGlobalColor("--main-primary-color");
+
+  function generateVideoDuration() {
+    return new Promise((resolve) => {
+      let path = `http://localhost:30400/storage/h5p/editor/${uploadedUrl}`
+        const video = document.createElement('video');
+        video.addEventListener('loadeddata', () => {
+            resolve(video.duration);
+            window.URL.revokeObjectURL(path);
+            console.log(video.duration);
+            setSelectedVideoDuration(video.duration);
+        });
+        video.preload = 'metadata';
+        video.src = path;
+        // Load video in Safari / IE11
+        video.muted = true;
+        video.playsInline = true;
+        video.play();
+    });
+  }
+
+  async function getThumbnailForVideo(file) {
+    var fileReader = new FileReader();
+    fileReader.onload = function() {
+      var blob = new Blob([fileReader.result], {type: file.type});
+      var url = URL.createObjectURL(blob);
+      var video = document.createElement('video');
+      var timeupdate = function() {
+          if (snapImage()) {
+            video.removeEventListener('timeupdate', timeupdate);
+            video.pause();
+          }
+      };
+      video.addEventListener('loadeddata', function() {
+          if (snapImage()) {
+            video.removeEventListener('timeupdate', timeupdate);
+          }
+      });
+      var snapImage = async function() { 
+        var canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        var image = canvas.toDataURL();
+        var success = image.length > 100000;
+        if (success) {
+            // var img = document.getElementById('output_image');
+            // img.src = image;
+            const base64 = await fetch(image);
+            const blob = await base64.blob();
+            var dataBinary=(image).split(',')[1];
+            const formData = new FormData();
+            formData.append("thumb", blob);
+            const thumbUrl = await resourceService.upload(formData);
+            setSelectedThumbnail(`http://localhost:30400${thumbUrl.thumbUrl}`)   
+          }
+        return success;
+      }
+      video.addEventListener('timeupdate', timeupdate);
+      video.preload = 'metadata';
+      video.src = url;
+      // Load video in Safari / IE11
+      video.muted = true;
+      video.playsInline = true;
+      video.play();
+    }
+    fileReader.readAsArrayBuffer(file);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("contentId", 0);
+    formData.append(
+      "field",
+      `{"name":"files","type":"video","label":"Add a video","importance":"high","description":"Click below to add a video you wish to use in your interactive video. You can add a video link or upload video files. It is possible to add several versions of the video with different qualities. To ensure maximum support in browsers at least add a version in webm and mp4 formats.","extraAttributes":["metadata"],"enableCustomQualityLabel":true}`
+    );
+    const result = await videoService.uploadvideoDirect(
+      formData
+      );
+    Swal.close();
+    if (result.success === false) {
+      Swal.fire({
+        title: result?.message,
+      });
+    } else {
+      setUploadedFile(file.name);
+      setSelectedVideoId(result.path);
+      setUploadedUrl(result.path);
+      return result;
+    }
+  }
+
+  useEffect(()=>{
+    console.log('selectedVideoDuration', selectedVideoDuration);
+    localStorage.setItem('VideoDuration', selectedVideoDuration);
+    localStorage.setItem('VideoThumbnail', selectedThumbnail);
+  }, [selectedVideoDuration,selectedThumbnail]);
+
   return (
     <div className="add-video-layout-formik">
       <Formik
@@ -1014,6 +1112,7 @@ const FormikVideo = ({
                           return true;
                           // eslint-disable-next-line no-else-return
                         } else {
+                          
                           Swal.fire({
                             title: "Please Wait !",
                             html: "Uploading video may take some time.",
@@ -1023,27 +1122,32 @@ const FormikVideo = ({
                             },
                             showConfirmButton: false,
                           });
-                          const formData = new FormData();
-                          formData.append("file", h5pFile);
-                          formData.append("contentId", 0);
-                          formData.append(
-                            "field",
-                            `{"name":"files","type":"video","label":"Add a video","importance":"high","description":"Click below to add a video you wish to use in your interactive video. You can add a video link or upload video files. It is possible to add several versions of the video with different qualities. To ensure maximum support in browsers at least add a version in webm and mp4 formats.","extraAttributes":["metadata"],"enableCustomQualityLabel":true}`
-                          );
-                          const result = await videoService.uploadvideoDirect(
-                            formData
-                            );
-                            Swal.close();
-                          if (result.success === false) {
-                            Swal.fire({
-                              title: result?.message,
-                            });
-                          } else {
-                            setUploadedFile(h5pFile.name);
-                            setSelectedVideoId(result.path);
-                            setUploadedUrl(result.path);
-                            setFieldValue("videoUrl", result.path);
-                          }
+                          const abc = await getThumbnailForVideo(h5pFile);
+                          setFieldValue("videoUrl", abc.path);
+                          generateVideoDuration();
+                          // const formData = new FormData();
+                          // formData.append("file", h5pFile);
+                          // formData.append("contentId", 0);
+                          // formData.append(
+                          //   "field",
+                          //   `{"name":"files","type":"video","label":"Add a video","importance":"high","description":"Click below to add a video you wish to use in your interactive video. You can add a video link or upload video files. It is possible to add several versions of the video with different qualities. To ensure maximum support in browsers at least add a version in webm and mp4 formats.","extraAttributes":["metadata"],"enableCustomQualityLabel":true}`
+                          // );
+                          // const result = await videoService.uploadvideoDirect(
+                          //   formData
+                          //   );
+                          //   Swal.close();
+                          // if (result.success === false) {
+                          //   Swal.fire({
+                          //     title: result?.message,
+                          //   });
+                          // } else {
+                          //   setUploadedFile(h5pFile.name);
+                          //   setSelectedVideoId(result.path);
+                          //   setUploadedUrl(result.path);
+                          //   setFieldValue("videoUrl", result.path);
+                          //   const abc =  generateVideoDuration();
+                          //   console.log('abc', abc);
+                          // }
                         }
                       }}
                       ref={imgUpload}
@@ -1079,6 +1183,8 @@ const FormikVideo = ({
                       </p>
                     </div>
                   </div>
+                  <div className='video_id'></div>
+                    <div className='canvas_id'></div>
                   {uploadedFile && (
                     <div
                       style={{
@@ -1095,6 +1201,7 @@ const FormikVideo = ({
                 </div>
               </div>
             )}
+           
             <div className="error" style={{ color: "red" }}>
               {errors.videoUrl && touched.videoUrl && errors.videoUrl}
             </div>

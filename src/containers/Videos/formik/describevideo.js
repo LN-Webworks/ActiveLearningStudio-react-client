@@ -28,6 +28,7 @@ const DescribeVideo = ({ setUploadImageStatus, setScreenStatus, setOpenVideo, sh
   const [selectedSubjects, setSelectedSubjects] = useState(null);
   const [selecteAuthorTags, setSelecteAuthorTags] = useState(null);
   const [selectedEducationLevel, setSelectedEducationLevel] = useState(null);
+  const [uploadCustomImage, setUploadCustomImage] = useState(false);
   const parser = new DOMParser();
 
   const formatApiData = (data) => {
@@ -169,6 +170,7 @@ const DescribeVideo = ({ setUploadImageStatus, setScreenStatus, setOpenVideo, sh
                 thumb_url: editVideo?.thumb_url
                   ? editVideo.thumb_url
                   : 'https://images.pexels.com/photos/5022849/pexels-photo-5022849.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280',
+                custom_thumbnail: uploadCustomImage
               }}
               validate={(values) => {
                 const errors = {};
@@ -260,7 +262,12 @@ const DescribeVideo = ({ setUploadImageStatus, setScreenStatus, setOpenVideo, sh
                         />
                       </div>
                     </div>
-
+                          
+                          <br/>
+                      <div>
+                          <HeadingText text="Custome Image"  className="formik-select-title" />
+                          <input type="checkbox" value={uploadCustomImage} onChange={(e)=> setUploadCustomImage(e.target.checked)} />
+                      </div>
                     <div className="formik-uploadimage">
                       <UploadImage
                         title="Upload poster (Optional)"
