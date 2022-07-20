@@ -5,7 +5,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import gifLoader from 'assets/images/276.gif';
-import { loadH5pResource, loadH5pResourceSettingsOpen, loadH5pResourceSettingsShared, loadH5pResourceXapi } from 'store/actions/resource';
+import { loadH5pResource, loadH5pResourceSettingsOpen, loadH5pResourceSettingsShared, loadH5pResourceXapi, saveH5pRecord } from 'store/actions/resource';
 import videoServices from 'services/videos.services';
 import indServices from 'services/indActivities.service';
 import * as xAPIHelper from 'helpers/xapi';
@@ -20,7 +20,7 @@ const H5PIVPreview = (props) => {
   const [resourceId, setResourceId] = useState(null);
   const currikiH5PWrapper = useRef(null);
   const adjustedWidth = useH5PPreviewResizer(currikiH5PWrapper);
-  const { activityId, loadH5pResourceProp, showLtiPreview, showActivityPreview, showvideoH5p, activities, allPlaylists } = props;
+  const { activityId, loadH5pResourceProp, showLtiPreview, showActivityPreview, showvideoH5p, activities, selectedPlaylist } = props;
   const initialActivityState = {
     intervalId: null,
     assets: [],
@@ -192,6 +192,22 @@ const H5PIVPreview = (props) => {
         }
         counter += 1;
       });
+    } else if (activityState.h5pObject.externalDispatcher && selectedPlaylist.project.project_type) {
+      activityState.h5pObject.externalDispatcher.on('xAPI', (event) => {
+        if (counter > 0) {
+          console.log({ new: event.getVerb() });
+          if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+            const h5pRecord = {
+              statement: JSON.stringify(event.data.statement),
+              playlist_id: selectedPlaylist.id,
+              activity_id: activityId
+            };
+            console.log({ h5pRecord });
+            dispatch(saveH5pRecord(h5pRecord));
+          }
+        }
+        counter += 1;
+      });
     }
     activityState.h5pObject.init();
   }, [activityState.h5pObject]);
@@ -255,6 +271,7 @@ H5PIVPreview.propTypes = {
   showLtiPreview: PropTypes.bool,
   showActivityPreview: PropTypes.bool,
   loadH5pResourceProp: PropTypes.func.isRequired,
+  selectedPlaylist: PropTypes.any.isRequired,
 };
 
 H5PIVPreview.defaultProps = {

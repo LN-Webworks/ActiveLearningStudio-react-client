@@ -204,6 +204,10 @@ export const loadH5pResourceXapi = (xapiData) => async () => {
   resourceService.getXapi({ statement: xapiData });
 };
 
+export const saveH5pRecord = (h5pRecord) => async () => {
+  resourceService.saveH5pRecord(h5pRecord);
+};
+
 export const loadH5pResourceSettings = (activityId) => resourceService.h5pResourceSettings(activityId);
 export const loadH5pResourceSettingsOpen = (activityId) => resourceService.h5pResourceSettingsOpen(activityId);
 export const loadH5pResourceSettingsShared = (activityId) => resourceService.h5pResourceSettingsShared(activityId);

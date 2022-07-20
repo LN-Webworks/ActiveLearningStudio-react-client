@@ -300,6 +300,12 @@ const searchPreviewIndependentActivity = (subOrgId, independent_activity) => htt
   .then(({ data }) => data)
   .catch((err) => Promise.reject(err.response.data));
 
+const saveH5pRecord = (h5pRecord) =>
+  httpService
+    .post(`/${apiVersion}/h5p-record`, h5pRecord)
+    .then(({ data }) => data)
+    .catch((err) => Promise.reject(err.response.data));
+
 export default {
   getAll,
   create,
@@ -338,4 +344,5 @@ export default {
   getSingleLayout,
   searchPreviewActivity,
   searchPreviewIndependentActivity,
+  saveH5pRecord
 };
