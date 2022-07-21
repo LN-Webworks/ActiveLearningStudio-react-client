@@ -156,7 +156,15 @@ function PlaylistPreview(props) {
                       (
                         <div className="row">
                           <div className="col-md-4 sidebar-wrap">
-                            <H5PIVSidebar allPlaylists={allPlaylists} activeActivityId={currentActiveId ? currentActiveId : currentActivity.id} setCurrentActiveId={setCurrentActiveId} />
+                            <H5PIVSidebar
+                              allPlaylists={allPlaylists}
+                              activeActivityId={currentActiveId ? currentActiveId : currentActivity.id}
+                              setCurrentActiveId={setCurrentActiveId}
+                              viewType={query.view}
+                              projectId={projectId}
+                              playlistId={playlistId}
+                              nextResource={nextResource}
+                            />
                           </div>
                           <div className="col-md-8 right-content-wrap">
                             <H5PIVPreview showLtiPreview activityId={currentActiveId ? currentActiveId : currentActivity.id} selectedPlaylist={selectedPlaylist} />

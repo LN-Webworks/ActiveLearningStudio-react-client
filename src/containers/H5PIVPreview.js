@@ -5,7 +5,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import gifLoader from 'assets/images/276.gif';
-import { loadH5pResource, loadH5pResourceSettingsOpen, loadH5pResourceSettingsShared, loadH5pResourceXapi, saveH5pRecord } from 'store/actions/resource';
+import { loadH5pResource, loadH5pResourceSettingsOpen, loadH5pResourceSettingsShared, loadH5pResourceXapi, saveH5pRecordAction } from 'store/actions/resource';
 import videoServices from 'services/videos.services';
 import indServices from 'services/indActivities.service';
 import * as xAPIHelper from 'helpers/xapi';
@@ -20,7 +20,7 @@ const H5PIVPreview = (props) => {
   const [resourceId, setResourceId] = useState(null);
   const currikiH5PWrapper = useRef(null);
   const adjustedWidth = useH5PPreviewResizer(currikiH5PWrapper);
-  const { activityId, loadH5pResourceProp, showLtiPreview, showActivityPreview, showvideoH5p, activities, selectedPlaylist } = props;
+  const { activityId, loadH5pResourceProp, showLtiPreview, showActivityPreview, showvideoH5p, activities, selectedPlaylist, saveH5pRecord } = props;
   const initialActivityState = {
     intervalId: null,
     assets: [],
@@ -196,14 +196,38 @@ const H5PIVPreview = (props) => {
       activityState.h5pObject.externalDispatcher.on('xAPI', (event) => {
         if (counter > 0) {
           console.log({ new: event.getVerb() });
-          if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
-            const h5pRecord = {
-              statement: JSON.stringify(event.data.statement),
-              playlist_id: selectedPlaylist.id,
-              activity_id: activityId
-            };
-            console.log({ h5pRecord });
-            dispatch(saveH5pRecord(h5pRecord));
+          console.log({ context: event.getVerifiedStatementValue(['context', 'contextActivities', 'parent']) });
+          console.log({ stmt: event.data.statement });
+          if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && event.data.statement.result) {
+            // const h5pRecord = {
+            //   statement: JSON.stringify(event.data.statement),
+            //   playlist_id: selectedPlaylist.id,
+            //   activity_id: activityId
+            // };
+            // saveH5pRecord(h5pRecord);
+            let newH5pRecord = {};
+            const getH5pRecords = localStorage.getItem('h5pRecords');
+            if (getH5pRecords) {
+              let h5pRecords = JSON.parse(getH5pRecords)
+              newH5pRecord = {
+                [selectedPlaylist.id.toString()]: {
+                  ...h5pRecords[selectedPlaylist.id.toString()],
+                  [activityId.toString()]: {
+                    statement: JSON.stringify(event.data.statement)
+                  }
+                }
+              }
+            } else {
+              newH5pRecord = {
+                [selectedPlaylist.id.toString()]: {
+                  [activityId.toString()]: {
+                    statement: JSON.stringify(event.data.statement)
+                  }
+                }
+              };
+            }
+            console.log({ newH5pRecord });
+            localStorage.setItem('h5pRecords', JSON.stringify(newH5pRecord))
           }
         }
         counter += 1;
@@ -271,6 +295,7 @@ H5PIVPreview.propTypes = {
   showLtiPreview: PropTypes.bool,
   showActivityPreview: PropTypes.bool,
   loadH5pResourceProp: PropTypes.func.isRequired,
+  saveH5pRecord: PropTypes.func.isRequired,
   selectedPlaylist: PropTypes.any.isRequired,
 };
 
@@ -282,6 +307,7 @@ H5PIVPreview.defaultProps = {
 
 const mapDispatchToProps = (dispatch) => ({
   loadH5pResourceProp: (activityId) => dispatch(loadH5pResource(activityId)),
+  saveH5pRecord: (h5pRecord) => dispatch(saveH5pRecordAction(h5pRecord)),
 });
 
 const mapStateToProps = (state) => ({

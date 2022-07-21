@@ -1,24 +1,74 @@
+/* eslint-disable  */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './SidebarStyle/style.scss';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Accordion from 'react-bootstrap/Accordion';
 import AccordionContext from 'react-bootstrap/AccordionContext';
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 import Card from 'react-bootstrap/Card';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const H5PIVSidebar = (props) => {
   const [isOpen, setOpen] = React.useState(false);
-  const { allPlaylists, activeActivityId, setCurrentActiveId } = props;
+  const {
+    allPlaylists,
+    activeActivityId,
+    setCurrentActiveId,
+    showLti,
+    shared,
+    projectId,
+    playlistId,
+    nextResource,
+    viewType,
+    setH5pCurrentActivity
+  } = props;
   console.log({ act: activeActivityId });
   // const organization = useSelector((state) => state.organization);
+  const h5pRecord = useSelector((state) => state.h5pRecord);
   // const [activeKey, setActiveKey] = useState();
   const handleActivityState = (activityId) => {
     localStorage.setItem('projectPreview', true);
     setCurrentActiveId(activityId);
   };
+  const currentPlaylistIndex = allPlaylists.findIndex((p) => p.id === playlistId);
+  const nextPlaylist = currentPlaylistIndex < allPlaylists.length - 1 ? allPlaylists[currentPlaylistIndex + 1] : null;
+  const organization = useSelector((state) => state.organization);
+  console.log('nextPlaylist', nextPlaylist);
+
+  const getNextLink = (activity) => {
+    let nextLink = '#';
+    if (activity) {
+      nextLink = `/playlist/${playlistId}/activity/${activity.id}/preview`;
+    } else if (nextPlaylist) {
+      nextLink = `/playlist/${nextPlaylist.id}/activity/${nextPlaylist.activities[0]?.id}/preview`;
+    }
+    if (nextLink !== '#') {
+      if (showLti) {
+        if (viewType === 'activity') {
+          nextLink += '/lti?view=activity';
+        } else {
+          nextLink += '/lti';
+        }
+      } else {
+        nextLink = `/org/${organization.currentOrganization?.domain}/project/${projectId}${nextLink}`;
+
+        if (shared) {
+          nextLink += '/shared';
+        }
+        if (viewType === 'activity') {
+          nextLink += '?view=activity';
+        }
+      }
+    } else {
+      if (viewType === 'activity') {
+        nextLink += '?view=activity';
+      }
+    }
+    return nextLink;
+  }
+
   return (
     <div className="sidebar-wrapper">
       <div className="project-heading-wrapper">
@@ -45,19 +95,24 @@ const H5PIVSidebar = (props) => {
                 }}
               >
                 {playlist.title}
-
               </span>
             </ContextAwareToggle>
             <Accordion.Collapse eventKey={count + 1}>
               <Card.Body>
                 {playlist.activities.map((activity) => (
                   <div className={`sidebar-links ${activeActivityId === activity.id ? 'active' : ''}`}>
-                    <a
-                      href={(e) => e.preventDefault()}
-                      onClick={() => handleActivityState(activity.id)}
-                    >
-                      {activity.title}
-                    </a>
+                    {nextResource && (
+                      <Link
+                        onClick={() => {
+                          if (setH5pCurrentActivity) {
+                            setH5pCurrentActivity(activity);
+                          }
+                        }}
+                        to={setH5pCurrentActivity ? void 0 : getNextLink(activity)}
+                      >
+                        {activity.title}
+                      </Link>
+                    )}
                   </div>
                 ))}
               </Card.Body>
@@ -65,7 +120,7 @@ const H5PIVSidebar = (props) => {
           </Card>
         ))}
       </Accordion>
-    </div>
+    </div >
   );
 };
 
@@ -91,9 +146,22 @@ export const ContextAwareToggle = ({
 };
 
 H5PIVSidebar.propTypes = {
-  allPlaylists: PropTypes.any.isRequired,
   activeActivityId: PropTypes.any.isRequired,
   setCurrentActiveId: PropTypes.func.isRequired,
+  showLti: PropTypes.bool,
+  shared: PropTypes.bool,
+  projectId: PropTypes.number,
+  playlistId: PropTypes.number.isRequired,
+  nextResource: PropTypes.object,
+  allPlaylists: PropTypes.array,
+};
+
+H5PIVSidebar.defaultProps = {
+  showLti: false,
+  shared: false,
+  projectId: null,
+  nextResource: null,
+  allPlaylists: [],
 };
 
 ContextAwareToggle.propTypes = {

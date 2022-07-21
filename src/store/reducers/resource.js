@@ -418,6 +418,11 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         searchPreviewActivity: action.payload,
       };
+    case actionTypes.SAVE_H5P_RECORD:
+      return {
+        ...state,
+        h5pRecord: action.payload,
+      };
     default:
       return state;
   }
