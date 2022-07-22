@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import './uploadimagev2.scss';
@@ -36,6 +36,17 @@ const UploadImageV2 = ({ className, setUploadImageStatus, formRef, thumb_url }) 
       });
     }
   };
+
+  useEffect(()=>{
+    if(uploadImage){
+      if(uploadImage.includes('pexels.com')){
+        localStorage.setItem('VideoThumbnail', uploadImage);
+      }else{
+        localStorage.setItem('VideoThumbnail', `${global.config.resourceUrl}${uploadImage}`);
+      }
+    }
+  }, [uploadImage]);
+
   return (
     <>
       <PexelsAPI

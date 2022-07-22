@@ -77,9 +77,12 @@ const AddVideo = ({
   }, [mediaSources]);
 
   useEffect(()=>{
-    localStorage.setItem('VideoThumbnail', selectedVideoThumbnail);
     localStorage.setItem('VideoDuration', selectedVideoDuration);
-  }, [selectedVideoThumbnail])
+  }, [selectedVideoDuration]);
+
+  useEffect(()=>{
+    localStorage.setItem('VideoThumbnail', selectedVideoThumbnail);
+  }, [selectedVideoThumbnail]);
 
   const primaryColor = getGlobalColor("--main-primary-color");
   return (
@@ -585,14 +588,23 @@ const FormikVideo = ({
   }, [editVideo, platform]);
   const primaryColor = getGlobalColor("--main-primary-color");
 
+  useEffect(()=>{
+    console.log('selectedVideoDuration', selectedVideoDuration);
+    localStorage.setItem('VideoDuration', selectedVideoDuration);
+  }, [selectedVideoDuration]);
+
+  useEffect(()=>{
+    console.log('selectedThumbnail', selectedThumbnail);
+    localStorage.setItem('VideoThumbnail', selectedThumbnail);
+  }, [selectedThumbnail]);
+
   function generateVideoDuration() {
     return new Promise((resolve) => {
-      let path = `http://localhost:30400/storage/h5p/editor/${uploadedUrl}`
+        let path = `http://localhost:30400/storage/h5p/editor/${uploadedUrl}`;
         const video = document.createElement('video');
         video.addEventListener('loadeddata', () => {
             resolve(video.duration);
             window.URL.revokeObjectURL(path);
-            console.log(video.duration);
             setSelectedVideoDuration(video.duration);
         });
         video.preload = 'metadata';
@@ -673,12 +685,6 @@ const FormikVideo = ({
       return result;
     }
   }
-
-  useEffect(()=>{
-    console.log('selectedVideoDuration', selectedVideoDuration);
-    localStorage.setItem('VideoDuration', selectedVideoDuration);
-    localStorage.setItem('VideoThumbnail', selectedThumbnail);
-  }, [selectedVideoDuration,selectedThumbnail]);
 
   return (
     <div className="add-video-layout-formik">

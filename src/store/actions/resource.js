@@ -242,14 +242,14 @@ export const createResourceAction = (playlistId, editor, editorType, metadata, h
     let thumb_url = metadata?.thumb_url;
     let duration = '';
     if(metadata && metadata.source_type){
-      if(metadata.custom_thumbnail){}else{
+      if(localStorage.getItem('VideoDuration')){
+        duration = localStorage.getItem('VideoDuration');
+      }
+      if(metadata.custom_thumbnail){
         if(localStorage.getItem('VideoThumbnail')){
           thumb_url = localStorage.getItem('VideoThumbnail');
         }
-        if(localStorage.getItem('VideoDuration')){
-          duration = localStorage.getItem('VideoDuration');
-        }
-      }
+      }else{}
     }
     const activity = {
       h5p_content_id: resource.id,

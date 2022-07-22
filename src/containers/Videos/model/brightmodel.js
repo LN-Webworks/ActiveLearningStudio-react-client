@@ -13,6 +13,7 @@ import Buttons from 'utils/Buttons/buttons';
 import { useDispatch } from 'react-redux';
 import { getBrightCMS, getBrightVideos, getBrightVideosSearch, getKalturaVideos, getVimeoVideos } from 'store/actions/videos';
 import { getGlobalColor } from 'containers/App/DynamicBrandingApply';
+import moment from 'moment';
 const BrightcoveModel = (props) => {
   const dispatch = useDispatch();
   const { platform, showSidebar, setSelectedVideoIdKaltura, selectedVideoIdVimeo, setSelectedVideoThumbnail,setSelectedVideoDuration} = props;
@@ -237,7 +238,8 @@ const BrightcoveModel = (props) => {
                                               onChange={() => {
                                                 props.setSelectedVideoId(data.id);
                                                 setSelectedVideoThumbnail(data.images.thumbnail.src)
-                                                setSelectedVideoDuration(data.duration);
+                                                console.log('data.duration', data.duration);
+                                                setSelectedVideoDuration(moment.duration(data.duration).seconds());
                                               }}
                                               type="radio"
                                             />
@@ -314,7 +316,7 @@ const BrightcoveModel = (props) => {
                                               onChange={() => {
                                                 setSelectedVideoIdKaltura(data.dataUrl);
                                                 setSelectedVideoThumbnail(data.thumbnailUrl);
-                                                setSelectedVideoDuration(data.msDuration);
+                                                setSelectedVideoDuration(moment.duration(data.msDuration).seconds());
                                               }}
                                               type="radio"
                                             />
