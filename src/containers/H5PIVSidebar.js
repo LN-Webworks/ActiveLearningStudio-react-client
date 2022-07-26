@@ -1,5 +1,5 @@
 /* eslint-disable  */
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './SidebarStyle/style.scss';
@@ -9,6 +9,7 @@ import AccordionContext from 'react-bootstrap/AccordionContext';
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 import Card from 'react-bootstrap/Card';
 import { useSelector } from 'react-redux';
+import H5PSummaryModal from './H5PSummaryModal';
 
 const H5PIVSidebar = (props) => {
   const [isOpen, setOpen] = React.useState(false);
@@ -35,7 +36,9 @@ const H5PIVSidebar = (props) => {
   const currentPlaylistIndex = allPlaylists.findIndex((p) => p.id === playlistId);
   const nextPlaylist = currentPlaylistIndex < allPlaylists.length - 1 ? allPlaylists[currentPlaylistIndex + 1] : null;
   const organization = useSelector((state) => state.organization);
-  console.log('nextPlaylist', nextPlaylist);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const getNextLink = (activity) => {
     let nextLink = '#';
@@ -99,19 +102,25 @@ const H5PIVSidebar = (props) => {
             </ContextAwareToggle>
             <Accordion.Collapse eventKey={count + 1}>
               <Card.Body>
-                {playlist.activities.map((activity) => (
+                {playlist.activities.map((activity, activityCount) => (
                   <div className={`sidebar-links ${activeActivityId === activity.id ? 'active' : ''}`}>
-                    {nextResource && (
-                      <Link
-                        onClick={() => {
-                          if (setH5pCurrentActivity) {
-                            setH5pCurrentActivity(activity);
-                          }
-                        }}
-                        to={setH5pCurrentActivity ? void 0 : getNextLink(activity)}
-                      >
-                        {activity.title}
-                      </Link>
+                    <Link
+                      onClick={() => {
+                        if (setH5pCurrentActivity) {
+                          setH5pCurrentActivity(activity);
+                        }
+                      }}
+                      to={setH5pCurrentActivity ? void 0 : getNextLink(activity)}
+                    >
+                      {activity.title}
+                    </Link>
+                    {activityCount == playlist.activities.length - 1 && (
+                      <H5PSummaryModal
+                        handleShow={handleShow}
+                        handleClose={handleClose}
+                        show={show}
+                        selectedPlaylistId={playlistId}
+                      />
                     )}
                   </div>
                 ))}
@@ -124,26 +133,25 @@ const H5PIVSidebar = (props) => {
   );
 };
 
-export const ContextAwareToggle = ({
-  children, eventKey, callback, classNames,
-}) => {
+function ContextAwareToggle({ children, eventKey, callback }) {
   const currentEventKey = useContext(AccordionContext);
+
   const decoratedOnClick = useAccordionToggle(
     eventKey,
     () => callback && callback(eventKey),
   );
+
   const isCurrentEventKey = currentEventKey === eventKey;
 
   return (
     <div
-      className={`accordion-header-wrapper d-flex justify-content-between align-items-center ${classNames}`}
-      onClick={() => decoratedOnClick()}
+      className={`accordion-header-wrapper d-flex justify-content-between align-items-center ${isCurrentEventKey ? 'active' : ''}`}
+      onClick={decoratedOnClick}
     >
       {children}
-      <FontAwesomeIcon icon={`angle-${isCurrentEventKey ? 'up' : 'down'}`} />
     </div>
   );
-};
+}
 
 H5PIVSidebar.propTypes = {
   activeActivityId: PropTypes.any.isRequired,

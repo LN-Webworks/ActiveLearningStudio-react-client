@@ -423,6 +423,11 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         h5pRecord: action.payload,
       };
+    case actionTypes.LOAD_H5P_RECORD:
+      return {
+        ...state,
+        h5pRecord: action.payload,
+      };
     default:
       return state;
   }

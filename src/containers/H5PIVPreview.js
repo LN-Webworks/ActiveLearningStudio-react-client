@@ -10,17 +10,32 @@ import videoServices from 'services/videos.services';
 import indServices from 'services/indActivities.service';
 import * as xAPIHelper from 'helpers/xapi';
 import useH5PPreviewResizer from '../helpers/useH5PPreviewResizer';
+// import H5PSummaryModal from './H5PSummaryModal';
 // import H5PIVSidebar from './H5PIVSidebar';
 
 let counter = 0;
 
 const H5PIVPreview = (props) => {
   const [loading, setLoading] = useState(true);
+  // const [show, setShow] = useState(false);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
   const { activeOrganization } = useSelector((state) => state.organization);
+  const h5pRecord = useSelector((state) => state.h5pRecord);
   const [resourceId, setResourceId] = useState(null);
   const currikiH5PWrapper = useRef(null);
   const adjustedWidth = useH5PPreviewResizer(currikiH5PWrapper);
-  const { activityId, loadH5pResourceProp, showLtiPreview, showActivityPreview, showvideoH5p, activities, selectedPlaylist, saveH5pRecord } = props;
+  const {
+    activityId,
+    loadH5pResourceProp,
+    showLtiPreview,
+    showActivityPreview,
+    showvideoH5p,
+    activities,
+    selectedPlaylist,
+    saveH5pRecord,
+    activityName
+  } = props;
   const initialActivityState = {
     intervalId: null,
     assets: [],
@@ -195,10 +210,8 @@ const H5PIVPreview = (props) => {
     } else if (activityState.h5pObject.externalDispatcher && selectedPlaylist.project.project_type) {
       activityState.h5pObject.externalDispatcher.on('xAPI', (event) => {
         if (counter > 0) {
-          console.log({ new: event.getVerb() });
-          console.log({ context: event.getVerifiedStatementValue(['context', 'contextActivities', 'parent']) });
-          console.log({ stmt: event.data.statement });
-          if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && event.data.statement.result) {
+
+          if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && (event.data.statement.result && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent']))) {
             // const h5pRecord = {
             //   statement: JSON.stringify(event.data.statement),
             //   playlist_id: selectedPlaylist.id,
@@ -209,11 +222,13 @@ const H5PIVPreview = (props) => {
             const getH5pRecords = localStorage.getItem('h5pRecords');
             if (getH5pRecords) {
               let h5pRecords = JSON.parse(getH5pRecords)
+              console.log({ compl: h5pRecords });
               newH5pRecord = {
                 [selectedPlaylist.id.toString()]: {
                   ...h5pRecords[selectedPlaylist.id.toString()],
                   [activityId.toString()]: {
-                    statement: JSON.stringify(event.data.statement)
+                    statement: JSON.stringify(event.data.statement),
+                    name: activityName
                   }
                 }
               }
@@ -221,13 +236,28 @@ const H5PIVPreview = (props) => {
               newH5pRecord = {
                 [selectedPlaylist.id.toString()]: {
                   [activityId.toString()]: {
-                    statement: JSON.stringify(event.data.statement)
-                  }
+                    statement: JSON.stringify(event.data.statement),
+                    name: activityName
+                  },
+                  totalActivityCount: selectedPlaylist.activities.length,
                 }
               };
             }
             console.log({ newH5pRecord });
             localStorage.setItem('h5pRecords', JSON.stringify(newH5pRecord))
+            if (Object.keys(newH5pRecord[selectedPlaylist.id.toString()]).length - 1 === newH5pRecord[selectedPlaylist.id.toString()].totalActivityCount) {
+              let apiPayload = convertH5pRecords(newH5pRecord[selectedPlaylist.id.toString()], selectedPlaylist.id)
+              apiPayload.then((response) => {
+                for (const recordNumber in response) {
+                  if (Object.hasOwnProperty.call(response, recordNumber)) {
+                    const element = response[recordNumber];
+                    saveH5pRecord(element);
+                    console.log({ element });
+                  }
+                }
+                localStorage.removeItem('h5pRecords');
+              })
+            }
           }
         }
         counter += 1;
@@ -236,6 +266,23 @@ const H5PIVPreview = (props) => {
     activityState.h5pObject.init();
   }, [activityState.h5pObject]);
 
+  const convertH5pRecords = async (defaultObj, playlistId) => {
+    let h5pRecords = {}, count = 0;
+    for (const key in defaultObj) {
+      if (Object.hasOwnProperty.call(defaultObj, key)) {
+        const element = defaultObj[key];
+        console.log(typeof element.statement);
+        h5pRecords[count] = {
+          statement: (typeof element.statement == "string") ? element.statement : JSON.stringify(element.statement),
+          playlist_id: playlistId,
+          activity_id: key,
+          activity_name: element.name
+        }
+        count++;
+      }
+    }
+    return h5pRecords;
+  }
   useEffect(() => {
     const h5pLibData = activityState.h5pObject && window.H5PIntegration ? Object.values(window.H5PIntegration.contents) : null;
     const h5pLib = Array.isArray(h5pLibData) && h5pLibData.length > 0 ? h5pLibData[0].library.split(' ')[0] : null;
@@ -285,6 +332,12 @@ const H5PIVPreview = (props) => {
           </div>
         </div>
       )}
+      {/* <H5PSummaryModal
+        handleShow={handleShow}
+        handleClose={handleClose}
+        show={show}
+        selectedPlaylistId={selectedPlaylist.id}
+      /> */}
     </>
   );
 };
@@ -297,6 +350,7 @@ H5PIVPreview.propTypes = {
   loadH5pResourceProp: PropTypes.func.isRequired,
   saveH5pRecord: PropTypes.func.isRequired,
   selectedPlaylist: PropTypes.any.isRequired,
+  activityName: PropTypes.any.isRequired,
 };
 
 H5PIVPreview.defaultProps = {

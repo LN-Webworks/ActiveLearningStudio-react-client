@@ -213,6 +213,15 @@ export const saveH5pRecordAction = (h5pRecord) => async (dispatch) => {
   return result;
 };
 
+export const loadH5pRecordAction = (h5pRecordId) => async (dispatch) => {
+  const result = await resourceService.loadH5pRecord(h5pRecordId);
+  dispatch({
+    type: actionTypes.LOAD_H5P_RECORD,
+    payload: result,
+  });
+  return result;
+};
+
 export const loadH5pResourceSettings = (activityId) => resourceService.h5pResourceSettings(activityId);
 export const loadH5pResourceSettingsOpen = (activityId) => resourceService.h5pResourceSettingsOpen(activityId);
 export const loadH5pResourceSettingsShared = (activityId) => resourceService.h5pResourceSettingsShared(activityId);

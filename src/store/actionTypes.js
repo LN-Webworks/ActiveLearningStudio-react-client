@@ -512,3 +512,4 @@ export const CLEAR_ADMIN_EXPORTED_ACTIVITIES =
 
 /** H5p Records*/
 export const SAVE_H5P_RECORD = "SAVE_H5P_RECORD";
+export const LOAD_H5P_RECORD = "LOAD_H5P_RECORD";

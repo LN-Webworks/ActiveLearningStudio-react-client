@@ -107,7 +107,6 @@ function PlaylistPreview(props) {
   }
 
   const allPlaylists = playlist.playlists;
-
   return (
     <section className="curriki-playlist-preview">
       <div className="project-share-preview-nav">
@@ -167,7 +166,12 @@ function PlaylistPreview(props) {
                             />
                           </div>
                           <div className="col-md-8 right-content-wrap">
-                            <H5PIVPreview showLtiPreview activityId={currentActiveId ? currentActiveId : currentActivity.id} selectedPlaylist={selectedPlaylist} />
+                            <H5PIVPreview
+                              showLtiPreview
+                              activityId={currentActiveId ? currentActiveId : currentActivity.id}
+                              selectedPlaylist={selectedPlaylist}
+                              activityName={currentActivity.title}
+                            />
                           </div>
                         </div>
                       ) : (
